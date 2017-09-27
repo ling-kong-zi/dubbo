@@ -28,6 +28,7 @@ import com.alibaba.dubbo.rpc.cluster.support.FailoverCluster;
  * <a href="http://en.wikipedia.org/wiki/Fault-tolerant_system">Fault-Tolerant</a>
  *
  * @author william.liangf
+ * Cluster将	 Directory中的多个Invoker伪装成一个	Invoker,对上层透明,伪装过程包含了容错逻辑,调用失败后,重试另一个
  */
 @SPI(FailoverCluster.NAME)
 public interface Cluster {

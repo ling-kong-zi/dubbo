@@ -33,6 +33,7 @@ import java.util.List;
  * @author qian.lei
  * @author william.liangf
  * @see com.alibaba.dubbo.rpc.cluster.Cluster#join(Directory)
+ * LoadBalance负责从多个Invoker中选出具体的一个用于本次调用,选的过程包含了负载均衡算法,调用失败后,需要重选
  */
 @SPI(RandomLoadBalance.NAME)
 public interface LoadBalance {

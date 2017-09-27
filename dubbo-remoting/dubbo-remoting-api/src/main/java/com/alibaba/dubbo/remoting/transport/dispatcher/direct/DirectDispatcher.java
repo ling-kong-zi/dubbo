@@ -21,7 +21,7 @@ import com.alibaba.dubbo.remoting.Dispatcher;
 
 /**
  * 不派发线程池。
- *
+ * 所有消息都不派发到线程池,全部在	IO	线程上直接执行。
  * @author chao.liuc
  */
 public class DirectDispatcher implements Dispatcher {

@@ -30,6 +30,7 @@ import java.util.List;
  * @author chao.liuc
  * @see com.alibaba.dubbo.rpc.cluster.Cluster#join(Directory)
  * @see com.alibaba.dubbo.rpc.cluster.Directory#list(Invocation)
+ * 负责从多个	Invoker中按路由规则选出子集,比如读写分离,应用隔离等
  */
 public interface Router extends Comparable<Router> {
 

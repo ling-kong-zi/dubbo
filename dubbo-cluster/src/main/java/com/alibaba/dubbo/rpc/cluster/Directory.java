@@ -29,6 +29,7 @@ import java.util.List;
  *
  * @author william.liangf
  * @see com.alibaba.dubbo.rpc.cluster.Cluster#join(Directory)
+ * 代表多个Invoker，可以把它看成List<Invoker>，但与List不同的是，它的值可能是动态变化的,比如注册中心推送变更
  */
 public interface Directory<T> extends Node {
 

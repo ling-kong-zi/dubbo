@@ -21,7 +21,7 @@ import com.alibaba.dubbo.remoting.Dispatcher;
 
 /**
  * 只有message receive使用线程池.
- *
+ * 只有请求响应消息派发到线程池,其它连接断开事件,心跳等消息,直接在	IO线程上执行。
  * @author chao.liuc
  */
 public class MessageOnlyDispatcher implements Dispatcher {
