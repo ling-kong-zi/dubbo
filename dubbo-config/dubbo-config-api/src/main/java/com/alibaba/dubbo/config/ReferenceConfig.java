@@ -81,6 +81,8 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
     // 接口代理类引用
     private transient volatile T ref;
     private transient volatile Invoker<?> invoker;
+
+    //##已经初始化
     private transient volatile boolean initialized;
     private transient volatile boolean destroyed;
     @SuppressWarnings("unused")
@@ -182,14 +184,16 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
         if (initialized) {
             return;
         }
+        //##更新
         initialized = true;
         if (interfaceName == null || interfaceName.length() == 0) {
             throw new IllegalStateException("<dubbo:reference interface=\"\" /> interface not allow null!");
         }
         // 获取消费者全局配置
         checkDefault();
+        //##为Config属性注入值
         appendProperties(this);
-        //--泛化调用为空
+        //##泛化调用为空
         if (getGeneric() == null && getConsumer() != null) {
             setGeneric(getConsumer().getGeneric());
         }
@@ -202,8 +206,10 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
             } catch (ClassNotFoundException e) {
                 throw new IllegalStateException(e.getMessage(), e);
             }
+            //检查借口不为空，是接口，且接口中存在methods中的所以方法
             checkInterfaceAndMethods(interfaceClass, methods);
         }
+        //直连方式，可在jvm，或dubbo.resolve.file，xml中获取服务提供地址
         String resolve = System.getProperty(interfaceName);
         String resolveFile = null;
         if (resolve == null || resolve.length() == 0) {
@@ -232,6 +238,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                 resolve = properties.getProperty(interfaceName);
             }
         }
+        //直连地址不为空
         if (resolve != null && resolve.length() > 0) {
             url = resolve;
             if (logger.isWarnEnabled()) {
@@ -244,15 +251,19 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
         }
         if (consumer != null) {
             if (application == null) {
+                //获取默认应用信息
                 application = consumer.getApplication();
             }
             if (module == null) {
+                //模块信息
                 module = consumer.getModule();
             }
             if (registries == null) {
+                //注册中心
                 registries = consumer.getRegistries();
             }
             if (monitor == null) {
+                //监控中心
                 monitor = consumer.getMonitor();
             }
         }

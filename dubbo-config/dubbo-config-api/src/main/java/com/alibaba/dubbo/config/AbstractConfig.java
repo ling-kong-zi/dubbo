@@ -111,6 +111,7 @@ public abstract class AbstractConfig implements Serializable {
                     String property = StringUtils.camelToSplitName(name.substring(3, 4).toLowerCase() + name.substring(4), "-");
 
                     String value = null;
+                    //##加config id系统中找
                     if (config.getId() != null && config.getId().length() > 0) {
                         String pn = prefix + config.getId() + "." + property;
                         value = System.getProperty(pn);
@@ -118,6 +119,8 @@ public abstract class AbstractConfig implements Serializable {
                             logger.info("Use System Property " + pn + " to config dubbo");
                         }
                     }
+
+                    //##为空，不加id
                     if (value == null || value.length() == 0) {
                         String pn = prefix + property;
                         value = System.getProperty(pn);
@@ -125,6 +128,7 @@ public abstract class AbstractConfig implements Serializable {
                             logger.info("Use System Property " + pn + " to config dubbo");
                         }
                     }
+                    //##为空
                     if (value == null || value.length() == 0) {
                         Method getter;
                         try {
@@ -137,6 +141,7 @@ public abstract class AbstractConfig implements Serializable {
                             }
                         }
                         if (getter != null) {
+                            //##如果对象中对应属性值为空,则在Properties文件中获取，不为空则保留
                             if (getter.invoke(config, new Object[0]) == null) {
                                 if (config.getId() != null && config.getId().length() > 0) {
                                     value = ConfigUtils.getProperty(prefix + config.getId() + "." + property);
@@ -144,6 +149,9 @@ public abstract class AbstractConfig implements Serializable {
                                 if (value == null || value.length() == 0) {
                                     value = ConfigUtils.getProperty(prefix + property);
                                 }
+
+                                //##若配置文件中也没有，则从legacyProperties找出对应key，
+                                // ##以legacyProperties Value作为key在Properties文件中获取
                                 if (value == null || value.length() == 0) {
                                     String legacyKey = legacyProperties.get(prefix + property);
                                     if (legacyKey != null && legacyKey.length() > 0) {
@@ -164,6 +172,11 @@ public abstract class AbstractConfig implements Serializable {
         }
     }
 
+    /**
+     * ##如果类名以bean或者config结尾，则去掉末尾返回，否则类名转为小写返回
+     * @param cls
+     * @return
+     */
     private static String getTagName(Class<?> cls) {
         String tag = cls.getSimpleName();
         for (String suffix : SUFFIXS) {
@@ -302,6 +315,12 @@ public abstract class AbstractConfig implements Serializable {
                 || type == Object.class;
     }
 
+    /**
+     * ##基础类型转换为包装类
+     * @param type
+     * @param value
+     * @return
+     */
     private static Object convertPrimitive(Class<?> type, String value) {
         if (type == char.class || type == Character.class) {
             return value.length() > 0 ? value.charAt(0) : '\0';

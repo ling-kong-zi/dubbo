@@ -125,6 +125,7 @@ public class ConfigUtils {
         if (expression == null || expression.length() == 0 || expression.indexOf('$') < 0) {
             return expression;
         }
+        //## "\\$\\s*\\{?\\s*([\\._0-9a-zA-Z]+)\\s*\\}?" 匹配${}表达式
         Matcher matcher = VARIABLE_PATTERN.matcher(expression);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) { // 逐个匹配
@@ -136,6 +137,7 @@ public class ConfigUtils {
             if (value == null) {
                 value = "";
             }
+            //把匹配成功的${value},换成value
             matcher.appendReplacement(sb, Matcher.quoteReplacement(value));
         }
         matcher.appendTail(sb);
@@ -146,9 +148,12 @@ public class ConfigUtils {
         if (PROPERTIES == null) {
             synchronized (ConfigUtils.class) {
                 if (PROPERTIES == null) {
+                    //##获取jvm级变量
                     String path = System.getProperty(Constants.DUBBO_PROPERTIES_KEY);
                     if (path == null || path.length() == 0) {
+                        //##获取环境变量
                         path = System.getenv(Constants.DUBBO_PROPERTIES_KEY);
+                        //环境变量也为空，则获取默认的配置文件
                         if (path == null || path.length() == 0) {
                             path = Constants.DEFAULT_DUBBO_PROPERTIES;
                         }
@@ -178,6 +183,7 @@ public class ConfigUtils {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static String getProperty(String key, String defaultValue) {
+        //##再次从系统中获取属性值
         String value = System.getProperty(key);
         if (value != null && value.length() > 0) {
             return value;
