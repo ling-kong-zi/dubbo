@@ -119,6 +119,7 @@ public final class ReflectUtils {
 
     private static final ConcurrentMap<String, Class<?>> DESC_CLASS_CACHE = new ConcurrentHashMap<String, Class<?>>();
 
+    //缓存stu name和class对应
     private static final ConcurrentMap<String, Class<?>> NAME_CLASS_CACHE = new ConcurrentHashMap<String, Class<?>>();
 
     private static final ConcurrentMap<String, Method> Signature_METHODS_CACHE = new ConcurrentHashMap<String, Method>();
@@ -599,6 +600,11 @@ public final class ReflectUtils {
         return sb.toString();
     }
 
+    /**
+     * ##返回name对应的class
+     * @param name
+     * @return
+     */
     public static Class<?> forName(String name) {
         try {
             return name2class(name);
@@ -631,6 +637,7 @@ public final class ReflectUtils {
     private static Class<?> name2class(ClassLoader cl, String name) throws ClassNotFoundException {
         int c = 0, index = name.indexOf('[');
         if (index > 0) {
+            //##获取[]的数量
             c = (name.length() - index) / 2;
             name = name.substring(0, index);
         }
@@ -819,6 +826,13 @@ public final class ReflectUtils {
         return findMethodByMethodSignature(clazz, methodName, null);
     }
 
+    /**
+     * ##获取stu，构造参数为interface的构造函数
+     * @param clazz
+     * @param paramType
+     * @return
+     * @throws NoSuchMethodException
+     */
     public static Constructor<?> findConstructor(Class<?> clazz, Class<?> paramType) throws NoSuchMethodException {
         Constructor<?> targetConstructor;
         try {

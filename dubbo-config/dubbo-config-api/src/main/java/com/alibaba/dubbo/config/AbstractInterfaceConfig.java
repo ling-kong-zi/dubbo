@@ -268,7 +268,12 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         }
     }
 
+    /**
+     * ##检查local，stu，mock是否合法
+     * @param interfaceClass
+     */
     protected void checkStubAndMock(Class<?> interfaceClass) {
+        //##未看
         if (ConfigUtils.isNotEmpty(local)) {
             Class<?> localClass = ConfigUtils.isDefault(local) ? ReflectUtils.forName(interfaceClass.getName() + "Local") : ReflectUtils.forName(local);
             if (!interfaceClass.isAssignableFrom(localClass)) {
@@ -281,18 +286,23 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
             }
         }
         if (ConfigUtils.isNotEmpty(stub)) {
+            //## stub=true或default，会返回默认的class
             Class<?> localClass = ConfigUtils.isDefault(stub) ? ReflectUtils.forName(interfaceClass.getName() + "Stub") : ReflectUtils.forName(stub);
+            //##stu class需要是interfaceClass子类
             if (!interfaceClass.isAssignableFrom(localClass)) {
                 throw new IllegalStateException("The local implemention class " + localClass.getName() + " not implement interface " + interfaceClass.getName());
             }
             try {
+                //stu中是否含有interface为参数的构造函数
                 ReflectUtils.findConstructor(localClass, interfaceClass);
             } catch (NoSuchMethodException e) {
                 throw new IllegalStateException("No such constructor \"public " + localClass.getSimpleName() + "(" + interfaceClass.getName() + ")\" in local implemention class " + localClass.getName());
             }
         }
         if (ConfigUtils.isNotEmpty(mock)) {
+            // ##以return开头
             if (mock.startsWith(Constants.RETURN_PREFIX)) {
+                //## 返回类型
                 String value = mock.substring(Constants.RETURN_PREFIX.length());
                 try {
                     MockInvoker.parseMockValue(value);
